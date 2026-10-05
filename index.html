@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beranda - Stok Gudang SPPG</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main id="v"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+<script>
+boot("index","Beranda",function(){var l=low();
+return'<div class="grid">'+G.map(function(g){var its=S.items.filter(function(i){return i.gudang===g});var n=its.filter(function(i){return i.pantau&&stok(i)<=i.min}).length;
+return'<div class="card" style="margin:0"><div class="mute">Gudang '+g+'</div><div class="big">'+its.length+' <span class="mute" style="font-size:.9rem">barang</span></div><div class="'+(n?"t l":"mute")+'" style="display:inline-block">'+n+' perlu isi ulang</div></div>'}).join("")+'</div><div class="card"><b>Barang yang akan habis</b><div class="mute" style="margin-bottom:8px">Hanya barang berlabel pantau (atur di Data barang).</div>'+
+tbl(["Barang","Gudang","#Stok","#Minimum","Status"],l.map(function(i){return'<tr><td>'+esc(i.nama)+'</td><td>'+i.gudang+'</td><td class="n">'+stok(i)+' '+esc(i.sat)+'</td><td class="n">'+i.min+'</td><td>'+status(i)+'</td></tr>'}).join(""))+'</div>'});
+</script>
+</body>
+</html>

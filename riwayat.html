@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Riwayat - Stok Gudang SPPG</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main id="v"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+<script>
+boot("riwayat","Riwayat",function(){var r=S.tx.filter(function(t){var it=item(t.item);return it&&(!F.g||it.gudang===F.g)&&(!F.j||t.jenis===F.j)&&(!F.d1||t.tgl>=F.d1)&&(!F.d2||t.tgl<=F.d2)});
+var key=function(t){return F.grp==="gudang"?item(t.item).gudang:F.grp==="tanggal"?t.tgl:F.grp==="jenis"?t.jenis:""};
+r.sort(function(a,b){return key(a)>key(b)?1:key(a)<key(b)?-1:b.tgl>a.tgl?1:-1});var last,h="";
+r.forEach(function(t){var it=item(t.item),k=key(t);if(F.grp&&k!==last){h+='<tr class="g"><td colspan="6">'+esc(k)+'</td></tr>';last=k}
+h+='<tr><td>'+t.tgl+'</td><td>'+esc(it.nama)+'</td><td>'+it.gudang+'</td><td>'+t.jenis+'</td><td class="n">'+t.jml+' '+esc(t.sat||it.sat)+'</td><td><button class="b d" onclick="delTx(\''+t.id+'\')">Hapus</button></td></tr>'});
+return'<div class="row"><label>Gudang<select id="rg" onchange="rf()">'+opt(G,F.g,"Semua")+'</select></label><label>Jenis<select id="rj" onchange="rf()">'+opt(["masuk","keluar"],F.j,"Semua")+'</select></label><label>Dari<input type="date" id="r1" value="'+F.d1+'" onchange="rf()"></label><label>Sampai<input type="date" id="r2" value="'+F.d2+'" onchange="rf()"></label><label>Kelompokkan<select id="rk" onchange="rf()">'+opt(["gudang","tanggal","jenis"],F.grp,"Tidak")+'</select></label></div><div class="card">'+tbl(["Tanggal","Barang","Gudang","Jenis","#Jumlah",""],h)+'</div>'});
+function rf(){F.g=val("rg");F.j=val("rj");F.d1=val("r1");F.d2=val("r2");F.grp=val("rk");REDRAW()}
+async function delTx(id){if(!confirm("Hapus transaksi ini?"))return;try{await DB.delTx(id);await reload()}catch(e){alert("Gagal menghapus: "+e.message)}}
+</script>
+</body>
+</html>

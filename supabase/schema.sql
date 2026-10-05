@@ -1,0 +1,110 @@
+-- Jalankan seluruh isi file ini di Supabase: SQL Editor > New query > Run
+
+create table items (
+  id uuid primary key default gen_random_uuid(),
+  nama text not null,
+  gudang text not null check (gudang in ('Kering','Basah','Alat')),
+  sat text not null default 'Kg',
+  minimum numeric not null default 0,
+  pantau boolean not null default false,
+  awal numeric not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create table tx (
+  id uuid primary key default gen_random_uuid(),
+  tgl date not null,
+  item_id uuid not null references items(id) on delete cascade,
+  jenis text not null check (jenis in ('masuk','keluar')),
+  jml numeric not null check (jml > 0),
+  sat text not null,
+  created_at timestamptz not null default now()
+);
+create index on tx (item_id);
+create index on tx (tgl);
+
+-- Hanya pengguna yang sudah login yang boleh membaca dan mengubah data
+alter table items enable row level security;
+alter table tx enable row level security;
+create policy "staf akses penuh" on items for all to authenticated using (true) with check (true);
+create policy "staf akses penuh" on tx for all to authenticated using (true) with check (true);
+
+-- Data awal: barang Gudang Kering dari formulir stock opname
+insert into items (nama, gudang, sat) values
+('Bawang goreng merah','Kering','Kg'),
+('Bawang goreng putih','Kering','Kg'),
+('Bawang putih bubuk','Kering','Kg'),
+('Beras','Kering','Kg'),
+('Bihun','Kering','Kg'),
+('Blueband','Kering','Kg'),
+('Bubble crumb','Kering','Kg'),
+('Bubuk kare','Kering','Kg'),
+('Bubuk keju','Kering','Kg'),
+('Bubuk kunyit','Kering','Kg'),
+('Bubuk telang','Kering','Kg'),
+('Bunga lawang','Kering','Kg'),
+('Cengkeh','Kering','Kg'),
+('Cengkeh bubuk','Kering','Kg'),
+('Cinnamon','Kering','Kg'),
+('Cuka','Kering','Kg'),
+('Dark soy sauce','Kering','Kg'),
+('Fibercreme','Kering','Kg'),
+('Garam 250 gr','Kering','Kg'),
+('Garam 500 gr','Kering','Kg'),
+('Gula merah','Kering','Kg'),
+('Gula pasir','Kering','Kg'),
+('Italian herbs','Kering','Kg'),
+('Jinten bubuk','Kering','Kg'),
+('Kapulaga','Kering','Kg'),
+('Kayu manis asli','Kering','Kg'),
+('Kayu manis bubuk','Kering','Kg'),
+('Kecap asin','Kering','Kg'),
+('Kecap manis','Kering','Kg'),
+('Keju cheddar','Kering','Kg'),
+('Keju slice','Kering','Kg'),
+('Keju spready','Kering','Kg'),
+('Kemiri','Kering','Kg'),
+('Kencur bubuk','Kering','Kg'),
+('Ketumbar (kg)','Kering','Kg'),
+('Ketumbar sachet','Kering','Saset'),
+('Knorr','Kering','Kg'),
+('Lada bubuk (kg)','Kering','Kg'),
+('Lada hitam asli','Kering','Kg'),
+('Lada sachet','Kering','Saset'),
+('Madu','Kering','Kg'),
+('Makaroni','Kering','Kg'),
+('Mayonais','Kering','Kg'),
+('Minyak goreng','Kering','Kg'),
+('Minyak ikan','Kering','Kg'),
+('Minyak wijen','Kering','Kg'),
+('Nori tabur','Kering','Kg'),
+('Oregano','Kering','Kg'),
+('Pala bubuk','Kering','Kg'),
+('Pala sachet','Kering','Saset'),
+('Paprika bubuk','Kering','Kg'),
+('Parsley','Kering','Kg'),
+('Rosemary','Kering','Kg'),
+('Royco 1kg','Kering','Kg'),
+('Royco 220gr','Kering','Kg'),
+('Santan bubuk','Kering','Kg'),
+('Saori','Kering','Kg'),
+('Saos barbeque','Kering','Kg'),
+('Saos inggris','Kering','Kg'),
+('Saos raja rasa','Kering','Kg'),
+('Saos spaghetti','Kering','Kg'),
+('Saos tomat','Kering','Kg'),
+('Selasih','Kering','Kg'),
+('Spagetti','Kering','Kg'),
+('Susu UHT 125 ml','Kering','Kg'),
+('Susu UHT 1L','Kering','Kg'),
+('Susu UHT 200ml','Kering','Kg'),
+('Telang kering','Kering','Kg'),
+('Tepung beras','Kering','Kg'),
+('Tepung maizena','Kering','Kg'),
+('Tepung panir','Kering','Kg'),
+('Tepung shihlin','Kering','Kg'),
+('Tepung tapioka','Kering','Kg'),
+('Tepung terigu','Kering','Kg'),
+('Terasi','Kering','Kg'),
+('Wijen hitam','Kering','Kg'),
+('Wijen putih','Kering','Kg');
