@@ -1,5 +1,5 @@
 // Fungsi bersama untuk semua halaman.
-var G=["Kering","Basah","Alat"],U=["Kg","Pouch","Saset","Botol","Bungkus"],S={items:[],tx:[]},F={g:"",q:"",j:"",d1:"",d2:"",grp:""},NAVP="";
+var G=["Kering","Basah","Alat"],U=["Kg","Pouch","Saset","Botol","Bungkus","Kotak"],S={items:[],tx:[]},F={g:"",q:"",j:"",d1:"",d2:"",grp:""},NAVP="";
 var PAGES=[["index","Beranda"],["stok","Stok barang"],["habis","Barang habis"],["masuk","Barang masuk"],["keluar","Barang keluar"],["riwayat","Riwayat"],["barang","Data barang"],["cetak","Cetak PDF"]];
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function val(id){return document.getElementById(id).value}
