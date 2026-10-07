@@ -18,22 +18,26 @@
 var SD=today(),BERSIH=false;
 boot("sisa","Sisa stok (Kering & Basah)",function(){var GS=["Kering","Basah"],g=gudangDipilih();if(GS.indexOf(g)<0)g=GS[0];var rows="";
 S.items.filter(function(i){return i.gudang===g}).sort(function(a,b){return a.nama>b.nama?1:-1}).forEach(function(i){units(i).forEach(function(u){
-var aw=calc(i,SD,"",u).awal,kp=0,ada=false;
-S.tx.forEach(function(t){if(t.item===i.id&&(t.sat||i.sat)===u&&t.jenis==="keluar"&&t.tgl===SD){kp+=t.jml;ada=true}});
-if(BERSIH)ada=false;var pre=ada?Math.round((aw-kp)*1000)/1000:"";
-rows+='<tr><td>'+esc(i.nama)+(u===i.sat?"":" ("+esc(u)+")")+'</td><td>'+esc(u)+'</td><td class="n">'+aw+'</td><td class="n"><input class="si" type="number" min="0" step="any" style="width:100px" data-i="'+i.id+'" data-s="'+esc(u)+'" data-aw="'+aw+'" value="'+pre+'" oninput="hitung(this)"></td><td class="n">'+(ada?Math.round(kp*1000)/1000:"")+'</td></tr>'})});
-return'<div class="row"><label>Gudang<select id="sg" onchange="gantiSg()">'+opt(GS,g)+'</select></label><label>Tanggal<input type="date" id="sd" value="'+SD+'" onchange="gantiTgl()"></label><button class="b p" id="btnsimpan" onclick="simpanSisa()">Simpan sisa stok</button></div><div id="msg" class="mute" style="white-space:pre-line;margin-bottom:10px"></div><div class="card"><div class="mute" style="margin-bottom:8px">Isi kolom Sisa stock sesuai hasil hitung fisik. Terpakai dihitung otomatis (Stok awal dikurangi Sisa stock). Barang yang dikosongkan tidak diubah. Gudang Alat dicatat lewat Barang keluar.</div>'+tbl(["Barang","Satuan","#Stok awal","#Sisa stock","#Terpakai"],rows)+'</div>'});
+var aw=calc(i,"","",u).real,pre="",ada=false;
+rows+='<tr><td>'+esc(i.nama)+(u===i.sat?"":" ("+esc(u)+")")+'</td><td>'+esc(u)+'</td><td class="n">'+aw+'</td><td class="n"><input class="si" type="number" min="0" step="any" style="width:100px" data-i="'+i.id+'" data-s="'+esc(u)+'" data-aw="'+aw+'" value="'+pre+'" oninput="hitung(this)"></td><td class="n"></td></tr>'})});
+return'<div class="row"><label>Gudang<select id="sg" onchange="gantiSg()">'+opt(GS,g)+'</select></label><label>Tanggal<input type="date" id="sd" value="'+SD+'" onchange="gantiTgl()"></label><button class="b p" id="btnsimpan" onclick="simpanSisa()">Simpan sisa stok</button></div><div id="msg" class="mute" style="white-space:pre-line;margin-bottom:10px"></div><div class="card"><div class="mute" style="margin-bottom:8px">Stok awal adalah stok saat ini. Isi Sisa stock sesuai hasil hitung fisik; Terpakai dihitung otomatis (Stok awal dikurangi Sisa stock). Setelah disimpan, data dimuat ulang dan Stok awal menjadi sama dengan sisa yang baru disimpan. Barang yang dikosongkan tidak diubah. Gudang Alat dicatat lewat Barang keluar.</div>'+tbl(["Barang","Satuan","#Stok awal","#Sisa stock","#Terpakai"],rows)+'</div>'});
 function hitung(el){var td=el.parentNode.nextSibling,a=+el.dataset.aw,v=el.value;if(v===""){td.textContent="";td.style.color="";return}var t=Math.round((a-v)*1000)/1000;td.textContent=t;td.style.color=t<0?"var(--bad)":""}
 function gantiSg(){try{sessionStorage.setItem("gdg",val("sg"))}catch(e){}BERSIH=false;REDRAW()}
 function gantiTgl(){SD=val("sd")||today();BERSIH=false;REDRAW()}
-async function simpanSisa(){if(SIBUK)return;var rows=[],err=[];
-[].slice.call(document.querySelectorAll(".si")).forEach(function(el){if(el.value==="")return;var it=item(el.dataset.i),a=+el.dataset.aw,v=parseFloat(el.value),t=Math.round((a-v)*1000)/1000;
+async function simpanSisa(){if(SIBUK)return;
+var el=[].slice.call(document.querySelectorAll(".si")).filter(function(e){return e.value!==""});
+if(!el.length){msg("Belum ada sisa stok yang diisi.");return}
+SIBUK=true;btnState(true);
+try{S=await DB.load();var rows=[],err=[];
+el.forEach(function(e){var it=item(e.dataset.i),u=e.dataset.s,v=parseFloat(e.value);if(!it)return;
 if(!(v>=0)){err.push(it.nama+": jumlah tidak valid");return}
-if(t<0){err.push(it.nama+" ("+el.dataset.s+"): sisa "+v+" lebih besar dari stok awal "+a+". Barang yang bertambah dicatat di Barang masuk.");return}
-rows.push({item:it.id,sat:el.dataset.s,jml:t})});
-if(err.length){msg("Belum disimpan. Periksa:\\n"+err.join("\\n"));return}
-if(!rows.length){msg("Belum ada sisa stok yang diisi.");return}
-SIBUK=true;btnState(true);try{await DB.setPakai(SD,rows);S=await DB.load();BERSIH=true;SIBUK=false;REDRAW();msg("Tersimpan: "+rows.length+" barang untuk tanggal "+SD+". Isian dikosongkan; untuk memeriksa, buka Riwayat atau Stok barang.")}catch(e){SIBUK=false;btnState(false,"Simpan sisa stok");msg("Gagal menyimpan: "+e.message)}}
+var a=calc(it,"","",u).real,t=Math.round((a-v)*1000)/1000;
+if(t<0){err.push(it.nama+" ("+u+"): sisa "+v+" lebih besar dari stok awal "+a+". Barang yang bertambah dicatat di Barang masuk.");return}
+rows.push({item:it.id,sat:u,jml:t})});
+if(err.length){SIBUK=false;btnState(false,"Simpan sisa stok");msg("Belum disimpan. Periksa:\n"+err.join("\n"));return}
+await DB.setPakai(SD,rows);S=await DB.load();SIBUK=false;REDRAW();
+msg("Tersimpan: "+el.length+" barang untuk tanggal "+SD+". Stok awal sekarang sudah sama dengan sisa stok yang disimpan.")}
+catch(e){SIBUK=false;btnState(false,"Simpan sisa stok");msg("Gagal menyimpan: "+e.message)}}
 </script>
 </body>
 </html>
