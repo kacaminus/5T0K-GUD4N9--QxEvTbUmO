@@ -18,5 +18,6 @@ var DB={
   async updItem(id,patch){var p={};for(var k in patch)p[k==="min"?"minimum":k]=patch[k];ok(await sb.from("items").update(p).eq("id",id))},
   async delItem(id){ok(await sb.from("items").delete().eq("id",id))},
   async addTx(t){ok(await sb.from("tx").insert({tgl:t.tgl,item_id:t.item,jenis:t.jenis,jml:t.jml,sat:t.sat}))},
+  async addTxMany(list){ok(await sb.from("tx").insert(list.map(function(t){return{tgl:t.tgl,item_id:t.item,jenis:t.jenis,jml:t.jml,sat:t.sat}})))},
   async delTx(id){ok(await sb.from("tx").delete().eq("id",id))}
 };

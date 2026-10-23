@@ -6,6 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stok barang - Stok Gudang SPPG</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#9C99E4">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 </head>
 <body>
 <nav id="nav"></nav>
@@ -16,8 +20,11 @@
 <script src="js/app.js"></script>
 <script>
 boot("stok","Stok barang",function(){var r=S.items.filter(function(i){return(!F.g||i.gudang===F.g)&&i.nama.toLowerCase().indexOf(F.q.toLowerCase())>-1});
-return'<div class="row"><label>Gudang<select id="fg" onchange="filt()">'+opt(G,F.g,"Semua")+'</select></label><label>Cari<input id="fq" value="'+esc(F.q)+'" oninput="filt()"></label></div><div class="card">'+
+return'<div class="row"><label>Gudang<select id="fg" onchange="filt()">'+opt(G,F.g,"Semua")+'</select></label><label>Cari<input id="fq" value="'+esc(F.q)+'" oninput="filt()"></label><button class="b" onclick="ekspStok()">Unduh Excel</button></div><div class="card">'+
 tbl(["Barang","Gudang","Stok","Status"],r.map(function(i){return'<tr><td>'+esc(i.nama)+'</td><td>'+i.gudang+'</td><td>'+stokTxt(i)+'</td><td>'+status(i)+'</td></tr>'}).join(""))+'</div>'});
+function ekspStok(){var rows=[["Barang","Gudang","Satuan","Stok","Minimum (satuan utama)","Dipantau"]];
+S.items.filter(function(i){return(!F.g||i.gudang===F.g)&&i.nama.toLowerCase().indexOf(F.q.toLowerCase())>-1}).sort(function(a,b){return G.indexOf(a.gudang)-G.indexOf(b.gudang)||a.nama.localeCompare(b.nama,"id",{sensitivity:"base",numeric:true})}).forEach(function(i){units(i).forEach(function(u){rows.push([i.nama,i.gudang,u,calc(i,"","",u).real,u===i.sat?i.min:"",i.pantau?"Ya":""])})});
+unduhExcel("Stok-barang",rows)}
 </script>
 </body>
 </html>

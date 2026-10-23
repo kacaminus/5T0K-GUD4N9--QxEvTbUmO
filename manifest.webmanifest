@@ -1,0 +1,25 @@
+{
+ "name": "Stok Gudang SPPG",
+ "short_name": "Stok Gudang",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#9C99E4",
+ "theme_color": "#17132B",
+ "lang": "id",
+ "icons": [
+  {
+   "src": "img/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "img/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

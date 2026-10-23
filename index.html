@@ -6,6 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Beranda - Stok Gudang SPPG</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#9C99E4">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 </head>
 <body>
 <nav id="nav"></nav>
@@ -15,9 +19,11 @@
 <script src="js/db.js"></script>
 <script src="js/app.js"></script>
 <script>
-boot("index","Beranda",function(){var l=low();
-return'<div class="grid">'+G.map(function(g){var its=S.items.filter(function(i){return i.gudang===g});var n=its.filter(function(i){return i.pantau&&stok(i)<=i.min}).length;
-return'<div class="card" style="margin:0"><div class="mute">Gudang '+g+'</div><div class="big">'+its.length+' <span class="mute" style="font-size:.9rem">barang</span></div><div class="'+(n?"t l":"mute")+'" style="display:inline-block">'+n+' perlu isi ulang</div></div>'}).join("")+'</div><div class="card"><b>Barang yang akan habis</b><div class="mute" style="margin-bottom:8px">Hanya barang berlabel pantau (atur di Data barang).</div>'+
+boot("index","Beranda",function(){var l=low(),ed=ROLE==="editor",hari=S.tx.filter(function(t){return t.tgl===today()}).length;
+var aksi=[["masuk.html","masuk","Catat barang masuk",1],["sisa.html","sisa","Isi sisa stok",1],["keluar.html","keluar","Barang keluar (Alat)",1],["cetak.html","cetak","Cetak laporan",0]].filter(function(a){return ed||!a[3]});
+return'<div class="hero"><div><h2>Halo! Apa yang ingin dikerjakan hari ini?</h2><p class="mute">'+S.items.length+' jenis barang di 3 gudang, '+hari+' pencatatan hari ini, '+l.length+' barang perlu diisi ulang.</p><div class="acts">'+aksi.map(function(a,k){return'<a class="b'+(k===0?" p":"")+'" href="'+a[0]+'">'+ico(a[1])+a[2]+'</a>'}).join("")+'</div></div><svg class="art" viewBox="0 0 220 160" aria-hidden="true"><circle cx="150" cy="80" r="64" fill="#fff" opacity=".4"/><circle cx="150" cy="80" r="44" fill="#17132B"/><path d="M128 74l22-12 22 12v24l-22 12-22-12zM128 74l22 12 22-12M150 86v24" fill="none" stroke="#CDF22B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="58" cy="38" r="9" fill="#CDF22B"/><circle cx="38" cy="122" r="6" fill="#FF9FE5"/><circle cx="206" cy="28" r="5" fill="#FFB878"/></svg></div>'+
+'<div class="grid">'+G.map(function(g){var its=S.items.filter(function(i){return i.gudang===g});var n=its.filter(function(i){return i.pantau&&stok(i)<=i.min}).length;
+return'<div class="card"><div class="mute">Gudang '+g+'</div><div class="big">'+its.length+' <span class="mute" style="font-size:.9rem;font-weight:500">barang</span></div><div class="t '+(n?"l":"k")+'" style="margin-top:6px">'+(n?n+" perlu isi ulang":"Semua aman")+'</div></div>'}).join("")+'</div><div class="card"><b>Barang yang akan habis</b><div class="mute" style="margin-bottom:8px">Hanya barang berlabel pantau (atur di Data barang).</div>'+
 tbl(["Barang","Gudang","#Stok","#Minimum","Status"],l.map(function(i){return'<tr><td>'+esc(i.nama)+'</td><td>'+i.gudang+'</td><td class="n">'+stok(i)+' '+esc(i.sat)+'</td><td class="n">'+i.min+'</td><td>'+status(i)+'</td></tr>'}).join(""))+'</div>'});
 </script>
 </body>
