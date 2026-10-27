@@ -69,6 +69,13 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .t.o{background:#FFD3E6;color:#9B1C56}
 tr.g td{background:var(--shell);font-weight:600}
 .empty{color:var(--mute);padding:24px;text-align:center}
+textarea{font:inherit;color:var(--ink);background:var(--shell);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;width:100%;resize:vertical}
+textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+.listbox{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--shell);border-radius:18px;padding:14px;margin-bottom:16px}
+.listbox label{width:100%}
+.ctt{white-space:normal!important;font-size:.78rem;color:var(--mute);min-width:200px;max-width:360px}
+tr.cek td{background:rgba(255,184,120,.2)}
+tr.baru td{background:rgba(205,242,43,.16)}
 /* halaman masuk */
 .solo{display:flex;align-items:center;justify-content:center}
 .solo main{margin:20px;max-width:400px;width:100%;min-height:0;padding:30px}
